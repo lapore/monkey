@@ -12,6 +12,8 @@ type CheckType struct {
 }
 
 func TestNextToken (t *testing.T) {
+    var test_name = "TestNextToken"
+
     input := `let five = 5;
               let ten = 10;
               let add = fn(x, y) {
@@ -70,18 +72,26 @@ func TestNextToken (t *testing.T) {
         tok := l.NextToken()
 
         if tok.Type != tt.expectedType {
-            t.Fatalf("TestNextToken[%d] - tokentype wrong. expected=%q, got=%q",
-                     i, tt.expectedType, tok.Type)
+            t.Fatalf("%q[%d] - tokentype wrong. expected=%q, got=%q",
+                     test_name, i, tt.expectedType, tok.Type)
+        } else {
+            t.Logf("%q[%d] - tokentype match. expected=%q, got=%q",
+                     test_name, i, tt.expectedType, tok.Type)
         }
 
         if tok.Literal != tt.expectedLiteral {
-            t.Fatalf("TestNextToken[%d] - literal wrong. expected=%q, got=%q",
-                     i, tt.expectedLiteral, tok.Literal)
+            t.Fatalf("%q[%d] - literal wrong. expected=%q, got=%q",
+                     test_name, i, tt.expectedLiteral, tok.Literal)
+        } else {
+            t.Logf("%q[%d] - literal match. expected=%q, got=%q",
+                     test_name, i, tt.expectedLiteral, tok.Literal)
         }
     }
 }
 
 func TestNextToken2 (t *testing.T) {
+    var test_name = "TestNextToken2"
+
     input := `=+(){},;`  // Using `` means raw string literal
 
     tests := []CheckType {
@@ -102,13 +112,19 @@ func TestNextToken2 (t *testing.T) {
         tok := l.NextToken()
 
         if tok.Type != tt.expectedType {
-            t.Fatalf("TestNextToken2[%d] - tokentype wrong. expected=%q, got=%q",
-                     i, tt.expectedType, tok.Type)
+            t.Fatalf("%q[%d] - tokentype wrong. expected=%q, got=%q",
+                     test_name, i, tt.expectedType, tok.Type)
+        } else {
+            t.Logf("%q[%d] - tokentype match. expected=%q, got=%q",
+                     test_name, i, tt.expectedType, tok.Type)
         }
 
         if tok.Literal != tt.expectedLiteral {
-            t.Fatalf("TestNextToken2[%d] - literal wrong. expected=%q, got=%q",
-                     i, tt.expectedLiteral, tok.Literal)
+            t.Fatalf("%q[%d] - literal wrong. expected=%q, got=%q",
+                     test_name, i, tt.expectedLiteral, tok.Literal)
+        } else {
+            t.Logf("%q[%d] - literal match. expected=%q, got=%q",
+                     test_name, i, tt.expectedLiteral, tok.Literal)
         }
     }
 }

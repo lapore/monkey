@@ -1,5 +1,6 @@
 package lexer
 
+import "fmt"
 import "monkey/token"
 
 type Lexer struct {
@@ -15,6 +16,10 @@ func New(input string) *Lexer {
     return l
 }
 
+// This is a helpr print function...
+func (l* Lexer) Print() {
+    fmt.Printf("position = %d readPosition = %d ch = %c", l.position, l.readPosition, l.ch)
+}
 
 // l *Lexer is a receiver argument..
 func (l *Lexer) readChar() {
@@ -29,29 +34,59 @@ func (l *Lexer) readChar() {
     l.readPosition += 1
 }
 
+// Dont increase position | readPosition, but just give us what next char is!
+func (l *Lexer) peekChar() byte {
+    if l.readPosition >= len(l.input) {
+        return 0
+    } else {
+        return l.input[l.readPosition]
+    }
+}
+
 func (l *Lexer) NextToken() token.Token {
     var tok token.Token
 
-    switch l.ch {
-        case '=':
+    // Continuing to skip whitespace...
+    for isWhitespace(l.ch) {
+        l.readChar()
+    }
+
+    switch {
+        case l.ch == '=':
             tok = newToken(token.ASSIGN, l.ch)
-        case ';':
+        case l.ch == ';':
             tok = newToken(token.SEMICOLON, l.ch)
-        case '(':
+        case l.ch == '(':
             tok = newToken(token.LPAREN, l.ch)
-        case ')':
+        case l.ch == ')':
             tok = newToken(token.RPAREN, l.ch)
-        case '{':
+        case l.ch == '{':
             tok = newToken(token.LBRACE, l.ch)
-        case '}':
+        case l.ch == '}':
             tok = newToken(token.RBRACE, l.ch)
-        case ',':
+        case l.ch == ',':
             tok = newToken(token.COMMA, l.ch)
-        case '+':
+        case l.ch == '+': {
             tok = newToken(token.PLUS, l.ch)
-        case 0:
+        }
+        case l.ch == 0: {
             tok.Literal = ""
             tok.Type    = token.EOF
+        }
+        // The first character is a letter, aka [a-zA-Z_], the remaining can be [a-zA-Z_0-9] 
+        // either an [identifier | keyword]!
+        case isLetter(l.ch): {
+           var leftposition int = l.position
+           for isLetter(l.ch) || isDigit(l.ch) {
+               l.readChar()
+           }
+           tok.Literal = l.input[leftposition:l.position]
+           tok.Type    = stringToType(tok.Literal)  // If they are keywords, return here
+           return tok
+        }
+        default : {
+            tok = newToken(token.ILLEGAL, l.ch)
+        }
     }
     l.readChar()
     return tok
@@ -59,5 +94,40 @@ func (l *Lexer) NextToken() token.Token {
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
     return token.Token{Type : tokenType, Literal: string(ch)}
+}
+
+func stringToType(literal string) token.TokenType {
+    fmt.Printf("Calling stringTotype %q", literal)
+    var keywords = map[string] token.TokenType {
+        "fn"    : token.FUNCTION,
+        "let"   : token.LET,
+    }
+    if tok, ok := keywords[literal]; ok {
+        return tok
+    }
+    return token.IDENT
+}
+
+func isLetter(ch byte) bool {
+    if ((ch >= 'a' && ch <= 'z')  ||
+        (ch >= 'A' && ch <= 'Z')  ||
+        (ch == '_'))  {
+        return true
+    }
+    return false
+}
+
+func isDigit(ch byte) bool {
+    if ch >= '0' && ch <= '9' {
+        return true
+    }
+    return false
+}
+
+func isWhitespace(ch byte) bool {
+   if ch == '\t' || ch == '\r' || ch == '\n' || ch == ' ' {
+       return true
+   }
+   return false
 }
 
