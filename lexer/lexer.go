@@ -25,7 +25,7 @@ func (l* Lexer) Print() {
 func (l *Lexer) readChar() {
     if l.readPosition >= len(l.input) {
         l.ch = 0
-    // Note for go else should be in the same line as { because go automatically insert ; 
+    // Note for go else should be in the same line as { because go automatically insert ;
     } else {
         l.ch = l.input[l.readPosition]
     }
@@ -54,6 +54,20 @@ func (l *Lexer) NextToken() token.Token {
     switch {
         case l.ch == '=':
             tok = newToken(token.ASSIGN, l.ch)
+        case l.ch == '+':
+            tok = newToken(token.PLUS, l.ch)
+        case l.ch == '-':
+            tok = newToken(token.MINUS, l.ch)
+        case l.ch == '!':
+            tok = newToken(token.BANG, l.ch)
+        case l.ch == '*':
+            tok = newToken(token.ASTERISK, l.ch)
+        case l.ch == '/':
+            tok = newToken(token.SLASH, l.ch)
+        case l.ch == '<':
+            tok = newToken(token.LT, l.ch)
+        case l.ch == '>':
+            tok = newToken(token.GT, l.ch)
         case l.ch == ';':
             tok = newToken(token.SEMICOLON, l.ch)
         case l.ch == '(':
@@ -73,16 +87,29 @@ func (l *Lexer) NextToken() token.Token {
             tok.Literal = ""
             tok.Type    = token.EOF
         }
-        // The first character is a letter, aka [a-zA-Z_], the remaining can be [a-zA-Z_0-9] 
+        // The first character is a digit, aka [0-9]+
+        case isDigit(l.ch) : {
+            var leftposition int = l.position
+            for isDigit(l.ch) {
+                l.readChar()
+            }
+            tok.Literal = l.input[leftposition:l.position]
+            tok.Type = token.INT
+
+            // TODO: However if next letter is anything like "." or letter, it should be invalid??
+            // We should report error...
+            return tok
+        }
+        // The first character is a letter, aka [a-zA-Z_], the remaining can be [a-zA-Z_0-9]
         // either an [identifier | keyword]!
         case isLetter(l.ch): {
-           var leftposition int = l.position
-           for isLetter(l.ch) || isDigit(l.ch) {
-               l.readChar()
-           }
-           tok.Literal = l.input[leftposition:l.position]
-           tok.Type    = stringToType(tok.Literal)  // If they are keywords, return here
-           return tok
+            var leftposition int = l.position
+            for isLetter(l.ch) || isDigit(l.ch) {
+                l.readChar()
+            }
+            tok.Literal = l.input[leftposition:l.position]
+            tok.Type    = stringToType(tok.Literal)  // If they are keywords, return here
+            return tok
         }
         default : {
             tok = newToken(token.ILLEGAL, l.ch)
@@ -97,7 +124,7 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 }
 
 func stringToType(literal string) token.TokenType {
-    fmt.Printf("Calling stringTotype %q", literal)
+    //fmt.Printf("Calling stringTotype %q\n", literal)
     var keywords = map[string] token.TokenType {
         "fn"    : token.FUNCTION,
         "let"   : token.LET,
@@ -130,4 +157,3 @@ func isWhitespace(ch byte) bool {
    }
    return false
 }
-

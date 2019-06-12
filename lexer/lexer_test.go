@@ -128,3 +128,43 @@ func TestNextToken2 (t *testing.T) {
         }
     }
 }
+
+func TestNextToken3 (t *testing.T) {
+    var test_name = "TestNextToken3"
+
+    input := `/+-!*/<>`  // Using `` means raw string literal
+
+    tests := []CheckType {
+             {token.SLASH,     "/"},
+             {token.PLUS,      "+"},
+             {token.MINUS,     "-"},
+             {token.BANG,      "!"},
+             {token.ASTERISK,  "*"},
+             {token.SLASH,     "/"},
+             {token.LT,        "<"},
+             {token.GT,        ">"},
+             {token.EOF,       ""},
+           }
+
+    l := New(input)
+
+    for i, tt := range tests {
+        tok := l.NextToken()
+
+        if tok.Type != tt.expectedType {
+            t.Fatalf("%q[%d] - tokentype wrong. expected=%q, got=%q",
+                     test_name, i, tt.expectedType, tok.Type)
+        } else {
+            t.Logf("%q[%d] - tokentype match. expected=%q, got=%q",
+                     test_name, i, tt.expectedType, tok.Type)
+        }
+
+        if tok.Literal != tt.expectedLiteral {
+            t.Fatalf("%q[%d] - literal wrong. expected=%q, got=%q",
+                     test_name, i, tt.expectedLiteral, tok.Literal)
+        } else {
+            t.Logf("%q[%d] - literal match. expected=%q, got=%q",
+                     test_name, i, tt.expectedLiteral, tok.Literal)
+        }
+    }
+}
