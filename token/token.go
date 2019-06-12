@@ -24,6 +24,10 @@ const (
 
     LT        = "<"
     GT        = ">"
+    L_EQ      = "<=" // TODO not implemented
+    G_EQ      = ">=" // TODO not implemented
+    EQ        = "=="
+    NOT_EQ    = "!="
 
     COMMA     = ","
     SEMICOLON = ";"
@@ -37,5 +41,8 @@ const (
     LET       = "LET"
     IF        = "IF"
     ELSE      = "ELSE"
+    RETURN    = "RETURN"
+    TRUE      = "TRUE"
+    FALSE     = "FALSE"
 
 )

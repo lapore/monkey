@@ -52,14 +52,29 @@ func (l *Lexer) NextToken() token.Token {
     }
 
     switch {
-        case l.ch == '=':
-            tok = newToken(token.ASSIGN, l.ch)
+        // You can either add "{" or not for GO case statement
+        case l.ch == '=': {
+            if l.peekChar() == '=' {
+                tok.Type = token.EQ
+                tok.Literal = "=="
+                l.readChar()
+            } else {
+                tok = newToken(token.ASSIGN, l.ch)
+            }
+        }
         case l.ch == '+':
             tok = newToken(token.PLUS, l.ch)
         case l.ch == '-':
             tok = newToken(token.MINUS, l.ch)
-        case l.ch == '!':
-            tok = newToken(token.BANG, l.ch)
+        case l.ch == '!': {
+            if l.peekChar() == '=' {
+                tok.Type = token.NOT_EQ
+                tok.Literal = "!="
+                l.readChar()
+            } else {
+                tok = newToken(token.BANG, l.ch)
+            }
+        }
         case l.ch == '*':
             tok = newToken(token.ASTERISK, l.ch)
         case l.ch == '/':
@@ -126,8 +141,13 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 func stringToType(literal string) token.TokenType {
     //fmt.Printf("Calling stringTotype %q\n", literal)
     var keywords = map[string] token.TokenType {
-        "fn"    : token.FUNCTION,
-        "let"   : token.LET,
+        "fn"      : token.FUNCTION,
+        "let"     : token.LET,
+        "if"      : token.IF,
+        "else"    : token.ELSE,
+        "return"  : token.RETURN,
+        "true"    : token.TRUE,
+        "false"   : token.FALSE,
     }
     if tok, ok := keywords[literal]; ok {
         return tok

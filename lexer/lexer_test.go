@@ -168,3 +168,70 @@ func TestNextToken3 (t *testing.T) {
         }
     }
 }
+
+func TestNextToken4 (t *testing.T) {
+    var test_name = "TestNextToken4"
+
+    input := `if (x > 800) {
+                dd = true;
+             } else {
+                dd = false;
+             }
+             return dd;
+             8 !=9
+             10==10`
+
+    tests := []CheckType {
+             {token.IF,        "if"},
+             {token.LPAREN,    "("},
+             {token.IDENT,     "x"},
+             {token.GT,        ">"},
+             {token.INT,       "800"},
+             {token.RPAREN,    ")"},
+             {token.LBRACE,    "{"},
+             {token.IDENT,     "dd"},
+             {token.ASSIGN,    "="},
+             {token.TRUE,      "true"},
+             {token.SEMICOLON, ";"},
+             {token.RBRACE,    "}"},
+             {token.ELSE,      "else"},
+             {token.LBRACE,    "{"},
+             {token.IDENT,     "dd"},
+             {token.ASSIGN,    "="},
+             {token.FALSE,     "false"},
+             {token.SEMICOLON, ";"},
+             {token.RBRACE,    "}"},
+             {token.RETURN,    "return"},
+             {token.IDENT,     "dd"},
+             {token.SEMICOLON, ";"},
+             {token.INT,       "8"},
+             {token.NOT_EQ,    "!="},
+             {token.INT,       "9"},
+             {token.INT,       "10"},
+             {token.EQ,        "=="},
+             {token.INT,       "10"},
+             {token.EOF,       ""},
+           }
+
+    l := New(input)
+
+    for i, tt := range tests {
+        tok := l.NextToken()
+
+        if tok.Type != tt.expectedType {
+            t.Fatalf("%q[%d] - tokentype wrong. expected=%q, got=%q",
+                     test_name, i, tt.expectedType, tok.Type)
+        } else {
+            t.Logf("%q[%d] - tokentype match. expected=%q, got=%q",
+                     test_name, i, tt.expectedType, tok.Type)
+        }
+
+        if tok.Literal != tt.expectedLiteral {
+            t.Fatalf("%q[%d] - literal wrong. expected=%q, got=%q",
+                     test_name, i, tt.expectedLiteral, tok.Literal)
+        } else {
+            t.Logf("%q[%d] - literal match. expected=%q, got=%q",
+                     test_name, i, tt.expectedLiteral, tok.Literal)
+        }
+    }
+}
