@@ -27,11 +27,11 @@ type Identifier struct {
     Value string
 }
 
-func (i *Identifier) expressionNode {
+func (i *Identifier) expressionNode() {
 
 }
 
-func (i *Identifier) TokenLiteral string {
+func (i *Identifier) TokenLiteral() string {
     return i.Token.Literal
 }
 
@@ -49,7 +49,7 @@ type LetStatement struct {
 func (ls *LetStatement) statementNode() {
 
 }
-func (ls *LetStatement) TokenLiteral() {
+func (ls *LetStatement) TokenLiteral() string {
     return ls.Token.Literal
 }
 
@@ -59,7 +59,7 @@ type Program struct {
     Statements []Statement
 }
 
-function (p *Program) TokenLiteral() string {
+func (p *Program) TokenLiteral() string {
     if len(p.Statements) > 0 {
         return p.Statements[0].TokenLiteral()
     } else {
