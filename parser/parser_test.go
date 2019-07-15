@@ -29,7 +29,7 @@ func TestLetStatements(t *testing.T) {
     }{
       {"x"},
       {"y"},
-      {"bar"},
+      {"foobar"},
     }
 
     for i,tt := range tests {
