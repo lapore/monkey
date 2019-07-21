@@ -53,6 +53,24 @@ func (ls *LetStatement) TokenLiteral() string {
     return ls.Token.Literal
 }
 
+// ------------------------------
+// Statement: return statement 
+// ------------------------------
+
+// return 5+5;
+type ReturnStatement struct {
+    Token       token.Token //return
+    ReturnValue Expression  //5+5 
+}
+
+func (rs *ReturnStatement) statementNode() {
+
+}
+func (rs *ReturnStatement) TokenLiteral() string {
+    return rs.Token.Literal
+}
+
+
 
 // A program consists of Multiple Statements node
 type Program struct {
